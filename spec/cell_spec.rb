@@ -3,64 +3,63 @@ require "rspec"
 require_relative "../lib/cell"
 
 describe Cell do
-  subject { Cell.new(:alive) }
-  it 'exists' do
-    expect(subject).to be_truthy
+  subject { Cell.new(state, neighbors) }
+  
+  def randomized_neighbors(alive_count)
+    alive_neighbors = Array.new(alive_count, Cell.new(:alive, []))
+    dead_neighbors = Array.new(rand(100), Cell.new(:dead, []))
+    alive_neighbors + dead_neighbors
   end
 
   describe '#make_alive' do
-    subject { Cell.new(:dead) }
-    it 'becomes alive with if has 2-3 neighbors' do
+    let(:state) { :dead }
+    let(:neighbors) { Array.new(rand(2..3)) }
+    it 'becomes alive with if as 2-3 neighbors' do
       subject.make_alive
       expect(subject.alive?).to eq true
     end
   end
 
   describe '#alive_neighbor_count' do
+    let(:state) { :dead }
+    let(:neighbors) { randomized_neighbors(@count) }
+    before { @count = rand(100) }
     it 'should return the number of alive neighbors' do
-      count = rand(0..100)
-      neighbors = []
-      count.times { neighbors << Cell.new(:alive) }
-      count.times { neighbors << Cell.new(:dead) }
-      expect(subject.alive_neighbor_count(neighbors)).to eq count
+      expect(subject.alive_neighbor_count).to eq @count
     end
   end
 
   describe '#should_live?' do
-    context 'on a live cell' do
-      subject { Cell.new(:alive) }
+    context 'on an alive cell' do
+      let(:state) { :alive }
       context 'with fewer than two live neighbors' do
+        let(:neighbors) { randomized_neighbors(rand(0..1)) }
         it 'should return false' do
-          neighbors = []
-          rand(0..1).times { neighbors << Cell.new(:alive) }
-          expect(subject.should_live?(neighbors)).to be false
+          expect(subject.should_live?).to be false
         end
       end
 
       context 'with more than three live neighbors' do
+        let(:neighbors) { randomized_neighbors(rand(3..100)) }
         it 'should return false' do
-          neighbors = []
-          4.times { neighbors << Cell.new(:alive) }
-          expect(subject.should_live?(neighbors)).to be false
+          expect(subject.should_live?).to be false
         end
       end
 
       context 'with two or three live neighbors' do
+        let(:neighbors) { randomized_neighbors(rand(2..3)) }
         it 'should return true' do
-          neighbors = []
-          rand(2..3).times { neighbors << Cell.new(:alive) }
-          expect(subject.should_live?(neighbors)).to be true
+          expect(subject.should_live?).to be true
         end
       end
     end
 
     context 'on a dead cell' do
-      subject { Cell.new(:dead) }
+      let(:state) { :dead  }
       context 'with exactly three live neighbors' do
+        let(:neighbors) { randomized_neighbors(3) }
         it 'should return true' do
-          neighbors = []
-          3.times { neighbors << Cell.new(:alive) }
-          expect(subject.should_live?(neighbors)).to be true
+          expect(subject.should_live?).to be true
         end
       end
     end

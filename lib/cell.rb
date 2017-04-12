@@ -1,9 +1,11 @@
 class Cell
   
   attr_reader :state
+  attr_accessor :neighbors
 
-  def initialize(state)
+  def initialize(state, neighbors)
     @state = state
+    @neighbors = neighbors
   end
 
   def alive?
@@ -14,28 +16,11 @@ class Cell
     @state = :alive
   end
 
-  def dies(neighbors)
-    return true if neighbors.between?(0,1) || neighbors > 3
+  def should_live?
+    alive_neighbor_count.between?(2, 3) ? true : false
   end
 
-  def should_live?(neighbors)
-    neighbor_count = alive_neighbor_count(neighbors)
-    if @state == :alive
-      if neighbor_count < 2
-        false
-      elsif neighbor_count > 3
-        false
-      else
-        true
-      end
-    else @state = :dead
-      if neighbor_count == 3
-        true
-      end
-    end
-  end
-
-  def alive_neighbor_count(neighbors)
+  def alive_neighbor_count
     neighbors.count { |neighbor| neighbor.state == :alive }
   end
 end
