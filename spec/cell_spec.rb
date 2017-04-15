@@ -1,21 +1,21 @@
 require 'pry'
-require "rspec"
-require_relative "../lib/cell"
+require 'rspec'
+require_relative '../lib/cell'
 
 describe Cell do
   subject { Cell.new(state, neighbors) }
-  
+
   def randomized_neighbors(alive_count)
     alive_neighbors = Array.new(alive_count, Cell.new(:alive, []))
     dead_neighbors = Array.new(rand(100), Cell.new(:dead, []))
     alive_neighbors + dead_neighbors
   end
 
-  describe '#make_alive' do
+  describe '#revive' do
     let(:state) { :dead }
     let(:neighbors) { Array.new(rand(2..3)) }
-    it 'becomes alive with if as 2-3 neighbors' do
-      subject.make_alive
+    it 'becomes alive' do
+      subject.revive
       expect(subject.alive?).to eq true
     end
   end
@@ -55,7 +55,7 @@ describe Cell do
     end
 
     context 'on a dead cell' do
-      let(:state) { :dead  }
+      let(:state) { :dead }
       context 'with exactly three live neighbors' do
         let(:neighbors) { randomized_neighbors(3) }
         it 'should return true' do

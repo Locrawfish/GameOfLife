@@ -1,5 +1,4 @@
 class Cell
-  
   attr_reader :state
   attr_accessor :neighbors
 
@@ -12,7 +11,7 @@ class Cell
     @state == :alive
   end
 
-  def make_alive
+  def revive
     @state = :alive
   end
 
@@ -21,10 +20,10 @@ class Cell
   end
 
   def alive_neighbor_count
-    neighbors.count { |neighbor| neighbor.state == :alive }
+    neighbors.count(&:alive?)
   end
 end
-# RULES 
+# RULES
 # Any live cell with fewer than two live neighbours dies (referred to as underpopulation or exposure[1]).
 # Any live cell with more than three live neighbours dies (referred to as overpopulation or overcrowding).
 # Any live cell with two or three live neighbours lives, unchanged, to the next generation.
